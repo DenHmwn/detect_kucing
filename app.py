@@ -14,7 +14,7 @@ except Exception as e:
     model = None
 
 # Setup Flask
-app = Flask(__name__)
+app = Flask(__name__, template_folder='.')
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 
 # Buat folder upload jika belum ada
