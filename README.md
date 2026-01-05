@@ -2,7 +2,7 @@
 
 Aplikasi **Detect Kucing** adalah model berbasis **Computer Vision dan Convolutional Neural Network (CNN)** yang digunakan untuk **mendeteksi apakah gambar berisi kucing atau bukan kucing**. Model ini dilatih menggunakan dataset berlabel dengan jumlah gambar:
 
-### Datasets
+## Datasets
 -  **10.000 gambar kucing (positif)**
 -  **40.000 gambar non-kucing (negatif)**
 ```text
@@ -50,6 +50,7 @@ detect_kucing/
 ├── requirements.txt
 └── README.md
 ```
+
 ---
 
 ##  Penjelasan File Utama
@@ -80,7 +81,7 @@ python predict.py --image path_ke_gambar.jpg
 
 ---
 
-### Instalasi Atau Cara Running
+## Instalasi Atau Cara Running
 
 ### Clone Repo
 ```bash
@@ -106,14 +107,14 @@ Confidence : 0.87
 
 ---
 
-### Author
+## Author
 ```text
 Deni Himawan
 ```
 
 ---
 
-### Lisensi
+## Lisensi
 ```text
 MIT
 ```
