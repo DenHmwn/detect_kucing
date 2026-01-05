@@ -106,15 +106,8 @@ Confidence : 0.87
 
 ---
 
-## Author
-```text
-Deni Himawan
-```
+**Author:** Deni Himawan
 
 ---
 
-## Lisensi
-```text
-MIT
-```
-
+MIT License
