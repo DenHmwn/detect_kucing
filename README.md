@@ -14,8 +14,7 @@ Proyek ini dibuat untuk tugas klasifikasi biner dan dapat digunakan sebagai dasa
 Proyek ini merupakan **monorepo** yang terdiri dari:
 
 - **Model Training** → file `train.py`  
-- **Prediksi Gambar** → file `predict.py`  
-- **Utility/Helper** → file `utils.py` (opsional)  
+- **Prediksi Gambar** → file `predict.py`
 - **Dependencies** → `requirements.txt`  
 - **Dataset & Model Output** → folder `dataset/`, `models/`
 
@@ -118,3 +117,4 @@ Deni Himawan
 ```text
 MIT
 ```
+
