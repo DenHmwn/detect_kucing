@@ -8,9 +8,9 @@ import uuid
 # Load model
 try:
     model = load_model('cat_model.h5')
-    print("✅ Model berhasil dimuat!")
+    print("Model berhasil dimuat!")
 except Exception as e:
-    print(f"❌ Error loading model: {e}")
+    print(f"Error loading model: {e}")
     model = None
 
 # Setup Flask
@@ -38,7 +38,7 @@ def index():
             try:
                 # Save uploaded file
                 file.save(filepath)
-                print(f"📁 File saved: {filepath}")
+                print(f"File saved: {filepath}")
 
                 if model is not None:
                     # Preprocess gambar dengan ukuran yang sama dengan training
@@ -53,24 +53,24 @@ def index():
                     # Threshold untuk klasifikasi (bisa disesuaikan)
                     threshold = 0.5
                     if confidence_score > threshold:
-                        prediction = "✅ KUCING TERDETEKSI!"
+                        prediction = "KUCING TERDETEKSI!"
                         confidence = f"{confidence_score * 100:.1f}%"
                     else:
-                        prediction = "❌ BUKAN KUCING"
+                        prediction = "BUKAN KUCING"
                         confidence = f"{(1 - confidence_score) * 100:.1f}%"
                     
                     # Path relatif untuk template
                     img_path = url_for('static', filename=f'uploads/{unique_filename}')
-                    print(f"🔍 Prediction: {prediction} (Confidence: {confidence})")
+                    print(f"Prediction: {prediction} (Confidence: {confidence})")
                 else:
-                    prediction = "❌ Model tidak tersedia"
+                    prediction = "Model tidak tersedia"
                     img_path = url_for('static', filename=f'uploads/{unique_filename}')
                     
             except Exception as e:
-                print(f"❌ Error processing image: {e}")
+                print(f"Error processing image: {e}")
                 prediction = f"Error: {str(e)}"
         else:
-            prediction = "❌ Tidak ada file yang diupload"
+            prediction = "Tidak ada file yang diupload"
 
     return render_template('index.html', prediction=prediction, img_path=img_path, confidence=confidence)
 
@@ -79,7 +79,7 @@ def too_large(e):
     return "File terlalu besar! Maksimal 16MB", 413
 
 if __name__ == '__main__':
-    print("🚀 Starting Cat Detector Server...")
-    print("📂 Upload folder:", app.config['UPLOAD_FOLDER'])
+    print("Starting Cat Detector Server...")
+    print("Upload folder:", app.config['UPLOAD_FOLDER'])
     app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # Max 16MB
     app.run(debug=True, host='0.0.0.0', port=5000)

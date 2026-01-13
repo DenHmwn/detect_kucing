@@ -718,7 +718,6 @@
                 accept="image/*"
                 required
               />
-              <div class="upload-icon">📸</div>
               <div class="upload-text" id="uploadText">
                 Unggah gambar di sini
               </div>
@@ -727,7 +726,7 @@
           </div>
 
           <button type="submit" class="analyze-btn" id="analyzeBtn">
-            🔬 ANALISIS SEKARANG
+            ANALISIS SEKARANG
           </button>
         </form>
 
@@ -757,7 +756,7 @@
 
         {% if prediction %}
         <div class="result-panel">
-          <h2 class="result-title">🎉 Hasil Analisis AI</h2>
+          <h2 class="result-title">Hasil Analisis AI</h2>
           <div class="prediction-badge">{{ prediction }}</div>
           {% if confidence %}
           <div style="color: #4ecdc4; font-weight: 600; margin-bottom: 20px">
@@ -852,14 +851,14 @@
           filename.length > maxLength
             ? filename.substring(0, maxLength) + "..."
             : filename;
-        uploadText.textContent = `📁 ${displayName}`;
+        uploadText.textContent = `${displayName}`;
       }
 
       // Handle form submission
       uploadForm.addEventListener("submit", (e) => {
         loadingOverlay.style.display = "flex";
         analyzeBtn.disabled = true;
-        analyzeBtn.textContent = "🔄 MEMPROSES...";
+        analyzeBtn.textContent = "MEMPROSES...";
       });
 
       // Initialize particles
