@@ -1,85 +1,62 @@
 import os
 import numpy as np
-from flask import Flask, render_template, request, url_for
-from tensorflow.keras.models import load_model
-from tensorflow.keras.utils import load_img, img_to_array  # Fix import
-import uuid
+import gradio as gr
 
-# Load model
+from tensorflow.keras.models import load_model
+from PIL import Image
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, "cat_model.h5")
+
 try:
-    model = load_model('cat_model.h5')
-    print("Model berhasil dimuat!")
+    model = load_model(MODEL_PATH)
+    print("✅ Model berhasil dimuat!")
 except Exception as e:
-    print(f"Error loading model: {e}")
+    print(f"❌ Error loading model: {e}")
     model = None
 
-# Setup Flask
-app = Flask(__name__, template_folder='.')
-app.config['UPLOAD_FOLDER'] = 'static/uploads'
 
-# Buat folder upload jika belum ada
-os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+def predict_cat(image):
+    if image is None:
+        return "❌ Silakan upload gambar terlebih dahulu."
 
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    prediction = None
-    img_path = None
-    confidence = None
+    if model is None:
+        return "❌ Model tidak tersedia atau gagal dimuat."
 
-    if request.method == 'POST':
-        file = request.files.get('file')
-        
-        if file and file.filename != '':
-            # Generate unique filename to avoid conflicts
-            file_ext = os.path.splitext(file.filename)[1]
-            unique_filename = str(uuid.uuid4()) + file_ext
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
-            
-            try:
-                # Save uploaded file
-                file.save(filepath)
-                print(f"File saved: {filepath}")
+    try:
+        # Gradio akan mengirim gambar dalam bentuk PIL Image
+        image = image.convert("RGB")
+        image = image.resize((224, 224))
 
-                if model is not None:
-                    # Preprocess gambar dengan ukuran yang sama dengan training
-                    img = load_img(filepath, target_size=(224, 224))  # Konsisten dengan model
-                    img_array = img_to_array(img) / 255.0
-                    img_array = np.expand_dims(img_array, axis=0)
+        img_array = np.array(image) / 255.0
+        img_array = np.expand_dims(img_array, axis=0)
 
-                    # Prediksi
-                    result = model.predict(img_array, verbose=0)
-                    confidence_score = float(result[0][0])
-                    
-                    # Threshold untuk klasifikasi (bisa disesuaikan)
-                    threshold = 0.5
-                    if confidence_score > threshold:
-                        prediction = "KUCING TERDETEKSI!"
-                        confidence = f"{confidence_score * 100:.1f}%"
-                    else:
-                        prediction = "BUKAN KUCING"
-                        confidence = f"{(1 - confidence_score) * 100:.1f}%"
-                    
-                    # Path relatif untuk template
-                    img_path = url_for('static', filename=f'uploads/{unique_filename}')
-                    print(f"Prediction: {prediction} (Confidence: {confidence})")
-                else:
-                    prediction = "Model tidak tersedia"
-                    img_path = url_for('static', filename=f'uploads/{unique_filename}')
-                    
-            except Exception as e:
-                print(f"Error processing image: {e}")
-                prediction = f"Error: {str(e)}"
+        result = model.predict(img_array, verbose=0)
+        confidence_score = float(result[0][0])
+
+        threshold = 0.5
+
+        # Sesuaikan dengan label saat training:
+        # Jika saat training: cat = 0 dan non_cat = 1, pakai logika ini.
+        if confidence_score < threshold:
+            confidence = (1 - confidence_score) * 100
+            return f"✅ KUCING TERDETEKSI!\nConfidence: {confidence:.1f}%"
         else:
-            prediction = "Tidak ada file yang diupload"
+            confidence = confidence_score * 100
+            return f"❌ BUKAN KUCING\nConfidence: {confidence:.1f}%"
 
-    return render_template('index.html', prediction=prediction, img_path=img_path, confidence=confidence)
+    except Exception as e:
+        return f"❌ Error saat memproses gambar: {str(e)}"
 
-@app.errorhandler(413)
-def too_large(e):
-    return "File terlalu besar! Maksimal 16MB", 413
 
-if __name__ == '__main__':
-    print("Starting Cat Detector Server...")
-    print("Upload folder:", app.config['UPLOAD_FOLDER'])
-    app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # Max 16MB
-    app.run(debug=True, host='0.0.0.0', port=5000)
+demo = gr.Interface(
+    fn=predict_cat,
+    inputs=gr.Image(type="pil", label="Upload gambar"),
+    outputs=gr.Textbox(label="Hasil Prediksi"),
+    title="🐱 Cat Detector AI",
+    description="Upload gambar untuk mendeteksi apakah gambar tersebut kucing atau bukan.",
+    allow_flagging="never",
+)
+
+if __name__ == "__main__":
+    demo.launch()
